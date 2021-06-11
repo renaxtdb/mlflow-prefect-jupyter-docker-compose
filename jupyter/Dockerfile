@@ -1,40 +1,37 @@
 ARG PYTHON_VERSION
 ARG DEBIAN_VERSION
 ARG TAG=${PYTHON_VERSION}-${DEBIAN_VERSION}
-FROM python:${TAG} AS production
+FROM python:${TAG} AS python-base
 
-LABEL maintainer="yu_adachi@albert2005.co.jp"
-LABEL version="1.0"
-LABEL description="sshとjupyterを実行可能なdocker image。付属のdocerk-composeと合わせることを推奨。"
-
+LABEL maintainer="renxtdb1@gmail.com"
+LABEL version="1.1"
+LABEL description="jupyterを実行可能なdocker image。付属のdocerk-composeと合わせることを推奨。"
 
 RUN mkdir -p /usr/share/man/man1
 # install etc & setting
 RUN apt-get update -y \
-    && apt-get install -y \
-    wget \
+    && apt-get install --no-install-recommends -y \
     curl \
     graphviz \
-    git
+    git\
 # install nodejs
-RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - \
-    && apt-get install -y nodejs
+    && curl -sL https://deb.nodesource.com/setup_16.x | bash - \
+    && apt-get install --no-install-recommends -y nodejs \
+    && rm -rf ~/.cache \
+    && apt-get clean all
 
 # install python module Production
 WORKDIR /tmp/
 COPY jupyter/pyproject.toml jupyter/poetry.lock* ./
 RUN pip install poetry \
     && poetry config virtualenvs.create false \
-    && poetry install
-
+    && poetry install \
+    && rm -rf ~/.cache \
 # install jupyterlab extentions
-RUN poetry run jupyter serverextension enable --py jupyterlab_code_formatter\
-    && poetry run jupyter labextension install \
+    && jupyter serverextension enable --py jupyterlab_code_formatter\
+    && jupyter labextension install \
         @ryantam626/jupyterlab_code_formatter \
         @jupyterlab/toc
 COPY jupyter/settings.jupyterlab-settings /root/.jupyter/lab/user-settings/@ryantam626/jupyterlab_code_formatter/settings.jupyterlab-settings
-
-ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.6.0/wait /wait
-RUN chmod +x /wait
 
 WORKDIR /home/

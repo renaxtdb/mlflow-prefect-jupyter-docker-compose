@@ -2,11 +2,18 @@ version: '3.4'
 services:
 
   postgres:
-    image: postgres:11
+    image: postgres:11-alpine
+    user: postgres
     volumes:
-      - ./db:/var/lib/postgresql/data
-      - ./postgresql/init1.sql:/docker-entrypoint-initdb.d/init1.sql
-      - ./postgresql/init2.sql:/docker-entrypoint-initdb.d/init2.sql
+      - ./db/:/var/lib/postgresql/data
+      - type: bind
+        source: ./postgresql/init1.sql
+        target: /docker-entrypoint-initdb.d/init1.sql
+        read_only: true
+      - type: bind
+        source: ./postgresql/init2.sql
+        target: /docker-entrypoint-initdb.d/init2.sql
+        read_only: true
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -15,12 +22,17 @@ services:
       - "postgres"
       - "-c"
       - "max_connections=150"
+    logging:
+      driver: json-file
+      options:
+        max-file: '1'
+        max-size: 3m
+    restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 20s
       timeout: 5s
       retries: 10
-    restart: always
     networks:
       - jupyter_network
 
@@ -33,10 +45,15 @@ services:
         - DEBIAN_VERSION=${DEBIAN_VERSION}
     container_name: mlflow
     environment:
-      WAIT_HOSTS: postgresql:5432, minio:${MINIO_PORT}
+      WAIT_HOSTS: minio:${MINIO_PORT}
       MLFLOW_S3_ENDPOINT_URL: ${MINIO_URL}
       AWS_ACCESS_KEY_ID: ${MINIO_ACCESS_KEY}
       AWS_SECRET_ACCESS_KEY: ${MINIO_SECRET_KEY}
+    logging:
+      driver: json-file
+      options:
+        max-file: '1'
+        max-size: 3m
     volumes:
       - ${MOUNT_PATH}:/home/jovyan/work
     ports:
@@ -67,26 +84,21 @@ services:
     restart: always
     volumes:
       - ${MOUNT_PATH}:/home/jovyan/work
-      - ./jupyter/config.toml:/root/.prefect/config.toml
+      - type: bind
+        source: ./jupyter/config.toml
+        target: /root/.prefect/config.toml
+        read_only: true
     environment:
       TZ: Asia/Tokyo
       AWS_ACCESS_KEY_ID: ${MINIO_ACCESS_KEY}
       AWS_SECRET_ACCESS_KEY: ${MINIO_SECRET_KEY}
       MLFLOW_S3_ENDPOINT_URL: ${MINIO_URL}
-      WAIT_HOSTS: postgresql:5432, minio:${MINIO_PORT}, apollo:4200
     ports:
       - "${JUPYTER_PORT_NO}:${JUPYTER_PORT_NO}"
-    healthcheck:
-      test: ["CMD-SHELL", "curl http://graphql:4201/health || exit 1"]
-      interval: "30s"
-      timeout: "5s"
-      retries: 0
-      start_period: "15s" # since docker-compose 3.4
-    depends_on:
-      - postgres
-      - mlflow
-      - graphql
-      - ui
+    logging:
+      driver: json-file
+      options:
+        max-file: '1'
     command: bash -c "
       jupyter lab
         --ip=0.0.0.0
@@ -109,6 +121,11 @@ services:
     environment:
       MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
       MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+    logging:
+      driver: json-file
+      options:
+        max-file: '1'
+        max-size: 3m
     command: server /export
     networks:
       - jupyter_network
@@ -137,6 +154,11 @@ services:
       HASURA_GRAPHQL_SERVER_PORT: "3000"
       HASURA_GRAPHQL_QUERY_PLAN_CACHE_SIZE: 100
       HASURA_GRAPHQL_LOG_LEVEL: "warn"
+    logging:
+      driver: json-file
+      options:
+        max-file: '1'
+        max-size: 3m
     networks:
       - jupyter_network
     restart: "always"
@@ -152,6 +174,11 @@ services:
       PREFECT_SERVER__DATABASE__CONNECTION_URL: ${DB_CONNECTION_URL}
       PREFECT_SERVER__HASURA__ADMIN_SECRET: ${PREFECT_SERVER__HASURA__ADMIN_SECRET:-hasura-secret-admin-secret}
       PREFECT_SERVER__HASURA__HOST: hasura
+    logging:
+      driver: json-file
+      options:
+        max-file: '1'
+        max-size: 3m
     networks:
       - jupyter_network
     restart: "always"
@@ -165,6 +192,11 @@ services:
     environment:
       PREFECT_SERVER__HASURA__ADMIN_SECRET: ${PREFECT_SERVER__HASURA__ADMIN_SECRET:-hasura-secret-admin-secret}
       PREFECT_SERVER__HASURA__HOST: hasura
+    logging:
+      driver: json-file
+      options:
+        max-file: '1'
+        max-size: 3m
     networks:
       - jupyter_network
     restart: "always"
@@ -183,6 +215,11 @@ services:
       PREFECT_SERVER__TELEMETRY__ENABLED: "false"
       GRAPHQL_SERVICE_HOST: http://graphql
       GRAPHQL_SERVICE_PORT: 4201
+    logging:
+      driver: json-file
+      options:
+        max-file: '1'
+        max-size: 3m
     networks:
       - jupyter_network
     restart: "always"
@@ -196,15 +233,16 @@ services:
     command: "/intercept.sh"
     environment:
       PREFECT_SERVER__APOLLO_URL: http://localhost:4200/graphql
+    logging:
+      driver: json-file
+      options:
+        max-file: '1'
+        max-size: 3m
     networks:
       - jupyter_network
     restart: "always"
     depends_on:
       - apollo
-
-
-volumes:
-  postgres:
 
 networks:
   jupyter_network:
