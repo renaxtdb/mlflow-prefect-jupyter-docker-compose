@@ -168,4 +168,4 @@ Thumbs.db
 /logs/
 
 !.gitkeep
-!/artifacts/.gitkeep
+!/logs/artifacts/.gitkeep
