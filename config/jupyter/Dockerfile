@@ -1,5 +1,7 @@
 ARG PYTHON_VERSION
 ARG DEBIAN_VERSION
+ARG JUPYTER_PORT_NO
+
 ARG TAG=${PYTHON_VERSION}-${DEBIAN_VERSION}
 FROM python:${TAG} AS python-base
 
@@ -34,4 +36,4 @@ RUN pip install poetry \
         @jupyterlab/toc
 COPY jupyter/settings.jupyterlab-settings /root/.jupyter/lab/user-settings/@ryantam626/jupyterlab_code_formatter/settings.jupyterlab-settings
 
-WORKDIR /home/
+WORKDIR /home/work

@@ -6,10 +6,9 @@ def random_error():
     if random.random() < 0.5:
         raise RuntimeError()
 
+
 with Flow('random-errors') as flow:
     for _ in range(8):
         random_error()
 
-flow.register(project_name='my pj')
-
-flow.run_agent()
+flow.register(project_name="My Project")
