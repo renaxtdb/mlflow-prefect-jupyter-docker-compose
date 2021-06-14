@@ -18,11 +18,17 @@ prefect = "^0.14.20"
 graphviz = "^0.16"
 seaborn = "^0.11.1"
 dask = "^2021.5.1"
+SQLAlchemy = "^1.4.18"
 
 [tool.poetry.dev-dependencies]
 black = "^21.5b2"
 pytest = "^6.2.4"
 jupyterlab-code-formatter = "^1.4.10"
+pytest-flakes = "^4.0.3"
+flake8 = "^3.9.2"
+pytest-cov = "^2.12.1"
+pytest-randomly = "^3.8.0"
+pytest-pydocstyle = "^2.2.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

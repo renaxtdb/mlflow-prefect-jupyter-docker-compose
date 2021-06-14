@@ -24,7 +24,7 @@ RUN apt-get update -y \
 
 # install python module Production
 WORKDIR /tmp/
-COPY jupyter/pyproject.toml jupyter/poetry.lock* ./
+COPY config/jupyter/pyproject.toml jupyter/poetry.lock* ./
 RUN pip install poetry \
     && poetry config virtualenvs.create false \
     && poetry install \
@@ -34,6 +34,6 @@ RUN pip install poetry \
     && jupyter labextension install \
         @ryantam626/jupyterlab_code_formatter \
         @jupyterlab/toc
-COPY jupyter/settings.jupyterlab-settings /root/.jupyter/lab/user-settings/@ryantam626/jupyterlab_code_formatter/settings.jupyterlab-settings
+COPY config/jupyter/settings.jupyterlab-settings /root/.jupyter/lab/user-settings/@ryantam626/jupyterlab_code_formatter/settings.jupyterlab-settings
 
 WORKDIR /home/work

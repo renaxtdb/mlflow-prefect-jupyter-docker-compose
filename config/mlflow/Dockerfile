@@ -25,12 +25,9 @@ RUN echo "export LANG=$LANG" >> /etc/profile.d/locale.sh
 #     boto3==1.17.86
 
 WORKDIR /tmp/
-COPY mlflow/pyproject.toml mlflow/poetry.lock* ./
+COPY config/mlflow/pyproject.toml mlflow/poetry.lock* ./
 RUN pip install poetry \
     && poetry config virtualenvs.create false \
     && poetry install
-
-ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.6.0/wait /wait
-RUN chmod +x /wait
 
 EXPOSE 5000
