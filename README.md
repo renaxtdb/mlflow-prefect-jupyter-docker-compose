@@ -3,7 +3,7 @@
 Deploy mlflow with docker-compose
 
 
-![Scheme図](doc/images/IMG_3847.JPG)
+![Scheme図](doc/images/Scheme.svg)
 
 
 ## 1. Create .env file
