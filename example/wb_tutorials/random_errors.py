@@ -10,6 +10,6 @@ with Flow('random-errors') as flow:
     for _ in range(8):
         random_error()
 
-flow.register(project_name='my pj')
+flow.register(project_name='My Project')
 
 flow.run_agent()
