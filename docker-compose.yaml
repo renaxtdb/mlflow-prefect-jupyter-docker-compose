@@ -122,6 +122,9 @@ services:
       until (/usr/bin/mc config host add myminio ${MINIO_URL} ${MINIO_ACCESS_KEY} ${MINIO_SECRET_KEY}) do echo 'try to create buckets...' && sleep 1; done;
       /usr/bin/mc mb myminio/default;
       /usr/bin/mc policy download myminio/default;
+      until (/usr/bin/mc config host add myminio ${MINIO_URL} ${MINIO_ACCESS_KEY} ${MINIO_SECRET_KEY}) do echo 'try to create buckets...' && sleep 1; done;
+      /usr/bin/mc mb myminio/prefect;
+      /usr/bin/mc policy download myminio/prefect;
       exit 0;
       "
     networks:
@@ -206,14 +209,15 @@ services:
       context: .
       dockerfile: config/agent/Dockerfile
     environment:
-      MLFLOW_S3_ENDPOINT_URL: ${MINIO_URL}
-      AWS_ACCESS_KEY_ID: ${MINIO_ACCESS_KEY}
-      AWS_SECRET_ACCESS_KEY: ${MINIO_SECRET_KEY}
       PREFECT__SERVER__HOST: http://172.17.0.1
       PREFECT__SERVER__PORT: 4200
+      AWS_ACCESS_KEY_ID: ${MINIO_ACCESS_KEY}
+      AWS_SECRET_ACCESS_KEY: ${MINIO_SECRET_KEY}
+    volumes:
+      - ${MOUNT_PATH}:/home/work
     command: >
       bash -c " prefect backend server
-      && prefect agent start"
+      && prefect agent start --label development -p /home/work/example"
     networks:
       - jupyter_network
     restart: "always"
