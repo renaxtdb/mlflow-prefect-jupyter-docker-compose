@@ -217,7 +217,7 @@ services:
       - ${MOUNT_PATH}:/home/work
     command: >
       bash -c " prefect backend server
-      && prefect agent start --label development -p /home/work/example"
+      && prefect agent start --label development -p /home/work -p /home/work/src/ -p /home/work/example/ -p /home/work/example/prefect_tutorials/"
     networks:
       - jupyter_network
     restart: "always"
