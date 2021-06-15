@@ -1,34 +1,68 @@
 # mlflow-prefect-jupyter-docker-compose
+
 Deploy mlflow with docker-compose
+
+
+![Scheme図](doc/images/IMG_3847.JPG)
+
 
 ## 1. Create .env file
 In `docker-composa.yaml`, some parameters is loaded from `.env` file.
 Set following parameters in `.env`.
 
 ```
-# docker-compose config
 USER_NAME = <user name>
-COMPOSE_PROJECT_NAME=mlflow_${USER_NAME}
+COMPOSE_PROJECT_NAME=<project name>
 
-# port setting
+# Mount volume path
+MOUNT_PATH = ./
+
+# jupyter port setting
 JUPYTER_PORT_NO = 8819
 
 # docker image version
 PYTHON_VERSION = 3.7
 DEBIAN_VERSION = slim-buster
 
-# postgresql config
-HOST=mlflow.dev
-POSTGRES_USER=demo-user
-POSTGRES_PASSWORD=demo-password
-POSTGRES_POERT=5432
-POSTGRES_DB_NAME=mlflow-db
-DB_URL = postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgresql:${POSTGRES_POERT}/${POSTGRES_DB_NAME}
-ARTIFACT_PATH = <artifact_path>
+# hasura config
+PREFECT_SERVER__HASURA__ADMIN_SECRET=<password>
+
+# Minio config
+MINIO_ACCESS_KEY=<user nmae>
+MINIO_SECRET_KEY=<password>
+MINIO_MOUNT_PATH=./logs/artifacts
+MINIO_PORT=9000
 
 #container resources
 CONTAINER_LIMIT_MEMORY = 8g
 CONTAINER_USE_CPU = 2
+
+# postgresql config
+POSTGRES_USER = <usuer name>
+POSTGRES_PASSWORD = <password>
+
+
+##### Automatically generated environment parameters
+MINIO_URL = http://minio:${MINIO_PORT}
+
+# prefect config
+PREFECT_SERVER_TAG=latest
+# Using exact version because of https://github.com/PrefectHQ/ui/issues/798
+PREFECT_UI_TAG=2021-02-23
+
+# hasura config
+PREFECT_SERVER__TELEMETRY__ENABLED=false
+PREFECT_SERVER_DB_CMD="prefect-server database upgrade -y"
+
+#postgresql
+POSTGRES_POERT=5432
+POSTGRES_DB_NAME=mlflow_db
+PREFECT_DB_NAME=prefect_db
+
+DB_URL = postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB_NAME}
+DB_CONNECTION_URL = postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${PREFECT_DB_NAME}
+
+ARTIFACT_PATH = s3://default/
 ```
 
 ## 2. Build and deploy
@@ -44,23 +78,20 @@ $ docker-compose up -d
 Jupyter Lab  
 http://localhost:8819  
 Mlflow  
-http://localhost:5000  
+http://localhost:5050  
 Prefect UI  
 http://localhost:8080  
 Minio  
 http://localhost:9000  
 
 
-
-
 ### Option: If you want prefect server
+
 ## 4. Run `start.sh` in Jupyter container
 
 After attatch Jupyter container
 
 ```sh
-$ cd /home/jovyan/work
+$ cd /home/work
 $ sh start.sh
 ```
-
-if you want prefect tutorial click [here](src/README.md).
