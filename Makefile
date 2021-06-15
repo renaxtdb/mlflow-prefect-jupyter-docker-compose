@@ -17,5 +17,5 @@ clean-cache:
 clean-all:
 	make down;
 	docker system prune -f;
-logs:
-	docker-compose logs;
+hist:
+	docker-compose logs -f;
