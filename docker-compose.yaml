@@ -27,6 +27,11 @@ services:
       interval: 20s
       timeout: 5s
       retries: 10
+    logging:
+      driver: json-file
+      options:
+        max-file: '1'
+        max-size: 3m
     restart: always
     networks:
       - jupyter_network
@@ -51,6 +56,11 @@ services:
       postgres:
         condition: service_healthy
     command: bash -c "mlflow server --backend-store-uri ${DB_URL} --default-artifact-root ${ARTIFACT_PATH} --host 0.0.0.0 --port 5050"
+    logging:
+      driver: json-file
+      options:
+        max-file: '1'
+        max-size: 3m
     networks:
       - jupyter_network
 
@@ -94,6 +104,11 @@ services:
       - -c
       - |
         jupyter lab --ip=0.0.0.0 --port=${JUPYTER_PORT_NO} --allow-root --no-browser --NotebookApp.notebook_dir='/home/work' --NotebookApp.token=''
+    logging:
+      driver: json-file
+      options:
+        max-file: '1'
+        max-size: 3m
     networks:
       - jupyter_network
 
@@ -109,6 +124,11 @@ services:
       MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
       MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
     command: server /export
+    logging:
+      driver: json-file
+      options:
+        max-file: '1'
+        max-size: 3m
     networks:
       - jupyter_network
 
@@ -127,6 +147,11 @@ services:
       /usr/bin/mc policy download myminio/prefect;
       exit 0;
       "
+    logging:
+      driver: json-file
+      options:
+        max-file: '1'
+        max-size: 3m
     networks:
       - jupyter_network
 
@@ -139,6 +164,11 @@ services:
       HASURA_GRAPHQL_SERVER_PORT: "3000"
       HASURA_GRAPHQL_QUERY_PLAN_CACHE_SIZE: 100
       HASURA_GRAPHQL_LOG_LEVEL: "warn"
+    logging:
+      driver: json-file
+      options:
+        max-file: '1'
+        max-size: 3m
     networks:
       - jupyter_network
     restart: "always"
@@ -154,6 +184,11 @@ services:
       PREFECT_SERVER__DATABASE__CONNECTION_URL: ${DB_CONNECTION_URL}
       PREFECT_SERVER__HASURA__ADMIN_SECRET: ${PREFECT_SERVER__HASURA__ADMIN_SECRET:-hasura-secret-admin-secret}
       PREFECT_SERVER__HASURA__HOST: hasura
+    logging:
+      driver: json-file
+      options:
+        max-file: '1'
+        max-size: 3m
     networks:
       - jupyter_network
     restart: "always"
@@ -167,6 +202,11 @@ services:
     environment:
       PREFECT_SERVER__HASURA__ADMIN_SECRET: ${PREFECT_SERVER__HASURA__ADMIN_SECRET:-hasura-secret-admin-secret}
       PREFECT_SERVER__HASURA__HOST: hasura
+    logging:
+      driver: json-file
+      options:
+        max-file: '1'
+        max-size: 3m
     networks:
       - jupyter_network
     restart: "always"
@@ -185,6 +225,11 @@ services:
       PREFECT_SERVER__TELEMETRY__ENABLED: "false"
       GRAPHQL_SERVICE_HOST: http://graphql
       GRAPHQL_SERVICE_PORT: 4201
+    logging:
+      driver: json-file
+      options:
+        max-file: '1'
+        max-size: 3m
     networks:
       - jupyter_network
     restart: "always"
@@ -201,6 +246,11 @@ services:
     networks:
       - jupyter_network
     restart: "always"
+    logging:
+      driver: json-file
+      options:
+        max-file: '1'
+        max-size: 3m
     depends_on:
       - apollo
 
@@ -224,7 +274,11 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-
+    logging:
+      driver: json-file
+      options:
+        max-file: '1'
+        max-size: 3m
 volumes:
   postgres:
 
