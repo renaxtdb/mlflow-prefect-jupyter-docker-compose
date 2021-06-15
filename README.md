@@ -69,8 +69,8 @@ ARTIFACT_PATH = s3://default/
 Build mlflow Dockerfilw, and then deploy applications.
 
 ```sh
-$ docker-compose build
-$ docker-compose up -d
+$ make build
+$ make up-background
 ```
 
 ## 3. Access Jupyter and Mlflow UI
