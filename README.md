@@ -1,15 +1,15 @@
 # mlflow-prefect-jupyter-docker-compose
 
-Deploy mlflow with docker-compose
+Deploy mlflow and Prefect with docker-compose.  
+You can use Prefect and MLflow by entering the Jupyter container and working with it.
 
-
-![Scheme図](doc/images/Scheme.svg)
+![Scheme図](doc/images/Scheme.png)
 
 
 ## 1. Create .env file
-In `docker-composa.yaml`, some parameters is loaded from `.env` file.
-Set following parameters in `.env`.
-
+In `docker-compose.yaml`, some parameters is loaded from `.env` file.  
+Set following parameters in `.env`.  
+You can easily configure it by using `.env_template`.
 ```
 USER_NAME = <user name>
 COMPOSE_PROJECT_NAME=<project name>
@@ -66,14 +66,14 @@ ARTIFACT_PATH = s3://default/
 ```
 
 ## 2. Build and deploy
-Build mlflow Dockerfilw, and then deploy applications.
+Build Mlflow server and Prefect server, and then deploy applications.
 
 ```sh
 $ make build
 $ make up-background
 ```
 
-## 3. Access Jupyter and Mlflow UI
+## 3. Access Jupyter and Mlflow UI and Prefect UI
 
 Jupyter Lab  
 http://localhost:8819  
