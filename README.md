@@ -67,7 +67,6 @@ ARTIFACT_PATH = s3://default/
 ```
 
 ## 2. Build and deploy
-
 Build Mlflow server and Prefect server, and then deploy applications.
 
 ```sh
