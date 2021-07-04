@@ -79,6 +79,6 @@ with Flow("etl", schedule=schedule, storage=storage) as flow:
     load_reference_data(reference_data)
     load_live_data(transformed_live_data)
 
-flow.register(project_name="My Project",labels=["development"])
+flow.register(project_name="My Project", labels=["dev"])
 
 

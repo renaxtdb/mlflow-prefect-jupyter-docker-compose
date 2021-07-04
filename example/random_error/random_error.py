@@ -15,4 +15,4 @@ with Flow('random-errors', storage=storage) as flow:
         random_error()
 
 
-flow.register(project_name="My Project",labels=["development"])
+flow.register(project_name="My Project",labels=["dev"])
