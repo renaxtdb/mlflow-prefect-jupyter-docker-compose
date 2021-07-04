@@ -35,5 +35,6 @@ RUN pip install poetry \
         @ryantam626/jupyterlab_code_formatter \
         @jupyterlab/toc
 COPY config/jupyter/settings.jupyterlab-settings /root/.jupyter/lab/user-settings/@ryantam626/jupyterlab_code_formatter/settings.jupyterlab-settings
+ENV PYTHONPATH /home/work
 
 WORKDIR /home/work
