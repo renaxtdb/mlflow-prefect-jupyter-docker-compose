@@ -12,10 +12,17 @@ stop:
 	docker-compose stop;
 down:
 	docker-compose down;
-clean-cache:
+clear-cache:
 	docker system prune;
-clean-all:
+all-clean:
 	make down;
 	docker system prune -f;
 hist:
 	docker-compose logs -f;
+remve-dbs:
+	rm -rf logs/db;
+	rm -rf logs/artifacts/*;
+init-prefect-server:
+	prefect backend server;
+	prefect server create-tenant -n default;
+
