@@ -25,7 +25,7 @@ RUN echo "export LANG=$LANG" >> /etc/profile.d/locale.sh
 #     boto3==1.17.86
 
 WORKDIR /tmp/
-COPY config/mlflow/pyproject.toml mlflow/poetry.lock* ./
+COPY config/mlflow/pyproject.toml config/mlflow/poetry.lock* ./
 RUN pip install poetry \
     && poetry config virtualenvs.create false \
     && poetry install
