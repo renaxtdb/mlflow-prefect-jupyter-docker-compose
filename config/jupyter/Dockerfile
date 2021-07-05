@@ -24,7 +24,7 @@ RUN apt-get update -y \
 
 # install python module Production
 WORKDIR /tmp/
-COPY config/jupyter/pyproject.toml jupyter/poetry.lock* ./
+COPY config/jupyter/pyproject.toml config/jupyter/poetry.lock* ./
 RUN pip install poetry \
     && poetry config virtualenvs.create false \
     && poetry install \
