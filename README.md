@@ -94,3 +94,8 @@ After attatch Jupyter container
 $ cd /home/work
 $ sh start.sh
 ```
+
+
+### Infrastructure model
+
+![Infrastructure model](.infragenie/infrastructure_model.png)
